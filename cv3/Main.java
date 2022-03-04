@@ -16,6 +16,7 @@ public class Main {
 		HanoiTower pokus = new HanoiTower(3);
 		System.out.println(pokus.toString());
 		pokus.createTree();
+		pokus.tree.bfs();
 	}
 
 }
