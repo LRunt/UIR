@@ -20,6 +20,8 @@ public class Graph {
 	public ArrayList<Integer> prevous;
 	/** Goal condition*/
 	public String goal;
+	/** marking array */
+	private int[] mark;
 	
 	/**
 	 * constructor
@@ -51,11 +53,12 @@ public class Graph {
 	}
 	
 	/**
-	 * Method 
+	 * Breadth-first search
+	 * @param start start vertex
 	 */
-	public void bfs() {
+	public void bfs(int start) {
 		int target = -1;
-		int[] mark = new int[edges.size()];
+		mark = new int[edges.size()];
 		mark[0] = 1;
 		Queue<Integer> q = new LinkedList<>();
 		q.add(0);
@@ -77,10 +80,55 @@ public class Graph {
 			mark[v] = 2;
 		}
 		if(target == -1) {
-			System.out.println("Cil nebyl nalezen!");
+			System.out.println("Target not found!");
 		}else {
 			writeSolution(target);
 		}
+	}
+	
+	/**
+	 * Start Method of Depth-first search
+	 * @param start start vertex
+	 */
+	public void dfs(int start) {
+		int target;
+		mark = new int[edges.size()];
+		if (mark[start] == 0) {
+			target = dfsPartial(start);
+			if (target != -1) {
+				writeSolution(target);
+			}else {
+				System.out.println("Target not found!");
+			}
+		}
+	}
+	
+	/**
+	 * Recursion method of Depth-first search
+	 * @param s start vertex
+	 * @return target vertex, -1 if target vertex not found
+	 */
+	public int dfsPartial(int s) {
+		mark[s] = 1;
+		int target = -1;
+		System.out.print(s + ", ");
+		ArrayList<Integer> neighbours = edges.get(s);
+		for(int i = 0; i < neighbours.size(); i++) {
+			int n = neighbours.get(i);
+			if (condition.get(n).equals(goal)) {
+				System.out.print(n + ", ");
+				System.out.println("Target found!");
+				return n;
+			} 
+			if(mark[n] == 0) {
+				target = dfsPartial(n);
+				if (target != -1) {
+					return target;
+				}	
+			}
+		}
+		mark[s] = 2;
+		return target;	
 	}
 	
 	/**
@@ -89,13 +137,13 @@ public class Graph {
 	 */
 	private void writeSolution(int target) {
 		Stack<String> text = new Stack<>();
-		text.push(condition.get(target));
+		text.push("State " + target +  " - " + condition.get(target));
 		while(prevous.get(target) != -1) {
 			target = prevous.get(target);
-			text.push(condition.get(target));
+			text.push("State " + target +  " - " + condition.get(target));
 		}
 		while(!text.empty()) {
-			System.out.print(text.pop() + "| ");
+			System.out.println(text.pop());
 		}
 	}
 }

@@ -13,10 +13,16 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		HanoiTower pokus = new HanoiTower(3);
-		System.out.println(pokus.toString());
-		pokus.createTree();
-		pokus.tree.bfs();
+		HanoiTower test = new HanoiTower(3);
+		System.out.println("Start: " + test.toString());
+		test.createTree();
+		System.out.println("Target: " + test.tree.goal);
+		System.out.println("---------------------------------");
+		System.out.println("Breadth-first search:");
+		test.tree.bfs(0);
+		System.out.println("---------------------------------");
+		System.out.println("Depth-first search:");
+		test.tree.dfs(0);
 	}
 
 }
