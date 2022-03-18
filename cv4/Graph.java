@@ -4,13 +4,11 @@
 package cv4;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Stack;
-import java.util.stream.Collectors;
 
 /**
- * PArt of linkedList
+ * Part of linkedList
  * @author Lukas Runt
  */
 class Link {
@@ -23,6 +21,7 @@ class Link {
 	public Link(String name, int distance) {
 		this.name = name;
 		this.distance = distance;
+		state = 0;
 	}
 	
 	 /**
@@ -31,6 +30,7 @@ class Link {
 	  */
 	public Link(String name) {
 		this.name = name;
+		state = 0;
 	}
 	
 	/** Name of vertex */
@@ -39,6 +39,7 @@ class Link {
 	public int distance;
 	/** Link to neighbour */
 	public Link next;
+	public byte state;
 }
 
 class Node implements Comparable<Node>{
@@ -50,6 +51,14 @@ class Node implements Comparable<Node>{
 	int status;
 	int id;
 	
+	/**
+	 * Constructon of Node
+	 * @param value distance from start
+	 * @param name name of node (name of vertex, where we are)
+	 * @param parent parent node (-1 if node is root)
+	 * @param id id of node
+	 * @param distance distance to goal
+	 */
 	public Node(int value, String name, int parent, int id, int distance) {
 		this.value = value;
 		this.name = name;
@@ -60,6 +69,9 @@ class Node implements Comparable<Node>{
 		status = 0;
 	}
 
+	/**
+	 * Method compares two objects
+	 */
 	@Override
 	public int compareTo(Node o) {
 		if(this.status == o.status){
@@ -71,10 +83,17 @@ class Node implements Comparable<Node>{
 		}
 	}
 	
+	/**
+	 * String representation of object for method A*
+	 * @return text representation
+	 */
 	public String getStringAPointer() {
 		return String.format("%s(%d+%d)", name, value, distance);
 	}
 	
+	/**
+	 * Text representation of object
+	 */
 	public String toString() {
 		return String.format("%s(%d)", name, value);
 	}
@@ -122,7 +141,13 @@ public class Graph {
 		helper.next = new Link(end, weight);
 	}
 	
+	/**
+	 * Method represents greedy algorithm (heuristik = 0) 
+	 */
 	public void greedy() {
+		for(int i = 0; i < edges.size(); i++) {
+			edges.get(i).state = 0;
+		}
 		ArrayList<Node> tree = new ArrayList<>();
 		//adding root
 		int count = 0;
@@ -132,14 +157,24 @@ public class Graph {
 		Node actual = tree.get(0);
 		System.out.print("Picking nodes: " + actual);
 		while(!actual.name.equals(goal)) {
-			for(int i = 0; i < edges.size(); i++) {
-				link = edges.get(i);
-				if(actual.name.equals(link.name)) {
-					while(link.next != null) {
-						link = link.next;
-						count++;
-						tree.add(new Node(actual.value + link.distance, link.name, actual.id, count, 0));
-						actual.children.add(count);
+			if(setState(actual.name)) {
+				for(int i = 0; i < edges.size(); i++) {
+					link = edges.get(i);
+					if(actual.name.equals(link.name)) {
+						while(link.next != null) {
+							link = link.next;
+							int index = 0;
+							for(int j = 0; j < edges.size(); j++) {
+								if(edges.get(j).name.equals(link.name)) {
+									index = j;
+								}
+							}
+							if(edges.get(index).state == 0) {
+								count++;
+								tree.add(new Node(actual.value + link.distance, link.name, actual.id, count, 0));
+								actual.children.add(count);
+							}
+						}
 					}
 				}
 			}
@@ -152,11 +187,34 @@ public class Graph {
 		this.writeSolution(tree);
 	}
 	
+	public boolean setState(String name) {
+		for(int i = 0; i < edges.size(); i++) {
+			if(edges.get(i).name.equals(name)) {
+				if(edges.get(i).state == 0) {
+					edges.get(i).state = 1;
+					return true;
+				}else {
+					return false;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Method of algorithm A*
+	 */
 	public void aPointer() {
 		ArrayList<Node> tree = new ArrayList<>();
 		//adding root
-		int count = 0;
-		tree.add(new Node(0, start, -1, count, 52));
+		int count = 0, distance = 0, p = 0;
+		Link startNode = edges.get(p);
+		while(startNode.name.equals(start)) {
+			p++;
+			startNode = edges.get(p);
+			distance = startNode.distance;
+		}
+		tree.add(new Node(0, start, -1, count, distance));
 		Link link = null;
 		Link vertex = null;
 		//picking root
@@ -189,6 +247,10 @@ public class Graph {
 		this.writeSolution(tree);
 	}
 	
+	/**
+	 * Method write solution
+	 * @param tree tree where is result
+	 */
 	public void writeSolution(ArrayList<Node> tree) {
 		Node actual = tree.get(0);
 		int parent, i;

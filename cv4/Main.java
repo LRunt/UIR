@@ -39,6 +39,11 @@ public class Main {
 		return model;
 	}
 	
+	/**
+	 * Method creates verticles from input file
+	 * @param in input
+	 * @param graph graph which is creating
+	 */
 	public static void createVertices(String in, Graph graph) {
 		int p = 0;
 		while(sc.hasNext()) {
@@ -58,6 +63,11 @@ public class Main {
 		}
 	}
 	
+	/**
+	 * Method fill the air distance to the vertices
+	 * @param in input
+	 * @param graph graph which is creating
+	 */
 	public static void distanceAsTheCrowFlies(String in, Graph graph) {
 		while(sc.hasNext()) {
 			in = sc.nextLine();
@@ -81,6 +91,21 @@ public class Main {
 		graph.greedy();
 		System.out.println("---------------A*------------------");
 		graph.aPointer();
+		
+		/*System.out.println();
+		System.out.println("BONUSOVA ULOHA");
+		//Queens queen = new Queens(4, 4, 0, 0, 0);
+		Generator generator = new Generator(4, 4);
+		generator.generateVariations();
+		generator.printVariations();
+g 		//Queens test = new Queens(4, 4, 13, 1, 1);
+		//test.chessboard[0][1] = TypesOfFields.QUEEN;
+		//test.chessboard[8] = TypesOfFields.QUEEN;
+		//test.activateRules();
+		//generator.generateVariationsWithRules();
+		//generator.printVariations();
+		//test.printChessboard();*/
+		
 	}
 
 }
