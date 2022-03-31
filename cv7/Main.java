@@ -8,12 +8,14 @@ import java.util.List;
 
 /**
  * @author Luaks Runt
- * @version 1.0 (28-03-2022)
+ * @version 1.0 (30-03-2022)
  */
 public class Main {
 	
-	public static int[] M1 = {2, 4, 10, 12, 3, 20, 30, 11, 25};
-	public static int[] M2 = {2, 4, 15, 18, 5, 50, 30, 34, 65};
+	/** x coordinates of points*/
+	public static final int[] M1 = {2, 4, 10, 12, 3, 20, 30, 11, 25};
+	/** y coordinates of points*/
+	public static final int[] M2 = {2, 4, 15, 18, 5, 50, 30, 34, 65};
 	
 	/**
 	 * Methos creates array of points from two arrays of coordinates
@@ -61,6 +63,35 @@ public class Main {
 		}
 	}
 	
+	/**
+	 * Method implements k-methoids algorithm 
+	 * @param centre centers of clusters
+	 * @param points point which will be clasified
+	 */
+	public static void kMedoids(Point[] centre, Point[] points) {
+		boolean sameCenters = false;
+		List<Point>[] assignedPoints;
+		Point[] prevousCenters;
+		int n = 1;
+		while(!sameCenters) {
+			assignedPoints = assignPoints(centre, points);
+			printClusters(assignedPoints, centre, n);
+			prevousCenters = centre;
+			centre = recalculateCenters(assignedPoints);
+			for(int i = 0; i < centre.length; i++) {
+				centre[i] = closestPoint(centre[i], points);
+			}
+			sameCenters = samePoints(centre, prevousCenters);
+			n++;
+		}
+	}
+	
+	/**
+	 * Method print to center of cluster and point of cluster to console
+	 * @param assignedPoints assigned points to clusters
+	 * @param centre centers of clusters
+	 * @param n number of iteration
+	 */
 	public static void printClusters(List<Point>[] assignedPoints, Point[] centre, int n) {
 		System.out.println("-------------------------------");
 		System.out.println("Iteration: " + n);
@@ -100,6 +131,7 @@ public class Main {
 	 * @return assigned points
 	 */
 	public static List<Point>[] assignPoints(Point[] centre, Point[] points) {
+		@SuppressWarnings("unchecked")
 		List<Point>[] assertion = new List[centre.length];
 		for(int i = 0; i < assertion.length; i++) {
 			assertion[i] = new ArrayList<>();
@@ -130,6 +162,23 @@ public class Main {
 	}
 	
 	/**
+	 * Method compute which point id the closest to center of gravity
+	 * @param centre center of gravity of cluster
+	 * @return the closest point to center of gravity
+	 */
+	public static Point closestPoint(Point centre, Point[] points) {
+		int distance = Integer.MAX_VALUE, index = 0;
+		for(int i = 0; i < points.length; i++) {
+			int eulerDist = (int)euclideanDistance(centre, points[i]);
+			if(eulerDist < distance) {
+				distance = eulerDist;
+				index = i;
+			}
+		}
+		return points[index];
+	}
+	
+	/**
 	 * Method recalculate coordinates of center of cluster
 	 * @param assignedPoints 
 	 * @return new centers
@@ -150,6 +199,7 @@ public class Main {
 	}
 
 	/**
+	 * Entry point of program
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -159,7 +209,14 @@ public class Main {
 		Point[] points = createPoints(M2, M1);
 		Point[] centre = new Point[centreOfGravity.size()];
 	    centre = centreOfGravity.toArray(centre);
+	    System.out.println("-------------------------------");
+	    System.out.println("\tK-MEANS");
+	    System.out.println("-------------------------------");
 		kMeans(centre, points);
+		System.out.println("-------------------------------");
+		System.out.println("\tK-MEDOIDS");
+		System.out.println("-------------------------------");
+		kMedoids(centre, points);
 	}
 
 }
