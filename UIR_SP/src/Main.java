@@ -43,6 +43,7 @@ public class Main {
     public static void main(String[] args){
         List<String> listOfLines = loadData("data.txt");
         List<Sentence> trainData = createTrainData(listOfLines);
+        BagOfWords bagOfWords = new BagOfWords(trainData);
         System.out.println();
     }
 }
