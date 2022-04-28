@@ -31,10 +31,12 @@ public class Main {
      * @return list of train data
      */
     public static List<String> createTrainData(List<String> data){
+
         return null;
     }
 
     public static void main(String[] args){
-        loadData("data.txt");
+        List<String> trainData = loadData("data.txt");
+
     }
 }
