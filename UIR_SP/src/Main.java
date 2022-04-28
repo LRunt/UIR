@@ -1,5 +1,6 @@
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,13 +31,18 @@ public class Main {
      * @param data list of lines
      * @return list of train data
      */
-    public static List<String> createTrainData(List<String> data){
-
-        return null;
+    public static List<Sentence> createTrainData(List<String> data){
+        List<Sentence> trainData = new ArrayList<>();
+        for(String sentence : data){
+            String[] splitData = sentence.split(" ", 2);
+            trainData.add(new Sentence(splitData[0], splitData[1]));
+        }
+        return trainData;
     }
 
     public static void main(String[] args){
-        List<String> trainData = loadData("data.txt");
-
+        List<String> listOfLines = loadData("data.txt");
+        List<Sentence> trainData = createTrainData(listOfLines);
+        System.out.println();
     }
 }
