@@ -49,6 +49,7 @@ public class Main {
         List<Sentence> trainData = createTrainData(listOfLines);
         BagOfWords bagOfWords = new BagOfWords(trainData);
         TermFrequency termFrequency = new TermFrequency(bagOfWords);
+        TF_IDF inverseDocumentFrequency = new TF_IDF(termFrequency, bagOfWords);
         System.out.println();
     }
 }

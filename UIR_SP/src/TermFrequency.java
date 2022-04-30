@@ -65,4 +65,12 @@ public class TermFrequency {
     private double count(int totalNumberOfWordsInCategory, int numberOfWord){
         return (double)numberOfWord/(double)totalNumberOfWordsInCategory;
     }
+
+    /**
+     * Getter of termFrequency
+     * @return termFrequency
+     */
+    public HashMap<String, HashMap> getTermFrequency() {
+        return termFrequency;
+    }
 }
