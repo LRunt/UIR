@@ -26,11 +26,10 @@ public class BagOfWords {
      */
     private void fillTables(List<Sentence> trainData){
         for(Sentence sentence : trainData){
-          if(categoriesMap.containsKey(sentence.category)){
-              putWords(sentence.category, sentence.text);
-          }else{
+          if(!categoriesMap.containsKey(sentence.category)) {
               categoriesMap.put(sentence.category, new HashMap<>());
           }
+              putWords(sentence.category, sentence.text);
         }
     }
 

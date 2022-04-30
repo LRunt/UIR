@@ -40,10 +40,15 @@ public class Main {
         return trainData;
     }
 
+    /**
+     * Entry point of the program
+     * @param args input arguments
+     */
     public static void main(String[] args){
         List<String> listOfLines = loadData("data.txt");
         List<Sentence> trainData = createTrainData(listOfLines);
         BagOfWords bagOfWords = new BagOfWords(trainData);
+        TermFrequency termFrequency = new TermFrequency(trainData);
         System.out.println();
     }
 }
