@@ -1,52 +1,31 @@
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
+/**
+ * Class {@code TermFrequency} represents term frequency in every category
+ * @author Lukas Runt
+ * @version 1.0 (30-04-2022)
+ */
 public class TermFrequency {
 
+    /** HashMap with term frequency*/
     private HashMap<String,HashMap> termFrequency;
+    /** HashMap which stores how many words are in each category*/
     private HashMap<String, Integer> numberOfWordsPerCategory;
 
-    public TermFrequency(List<Sentence> trainData){
-        this.termFrequency = new HashMap<>();
-        this.numberOfWordsPerCategory = new HashMap<>();
-        fillTables(trainData);
-        this.numberOfWordsPerCategory = countWordsPerCategories(termFrequency);
-        countTermFrequency(numberOfWordsPerCategory, termFrequency);
+    /**
+     * Constructor of class {@code TermFrequency}
+     * @param countedBagOfWords bagOfWords, where in counted how many times the words appear in each category
+     */
+    public TermFrequency(BagOfWords countedBagOfWords){
+        this.numberOfWordsPerCategory = countWordsPerCategories(countedBagOfWords.getCategoriesMap());
+        this.termFrequency = countTermFrequency(numberOfWordsPerCategory, countedBagOfWords.getCategoriesMap());
     }
 
     /**
-     * Method fill table with train data
-     * @param trainData train sentences
+     * Method counts words per each category
+     * @param bagOfWords bag of words, from which everything is calculated
+     * @return table with numbers of words per category
      */
-    private void fillTables(List<Sentence> trainData){
-        for(Sentence sentence : trainData){
-            if(!termFrequency.containsKey(sentence.category)) {
-                termFrequency.put(sentence.category, new HashMap<>());
-            }
-            putWords(sentence.category, sentence.text);
-        }
-    }
-
-    /**
-     * Mathod count increase number of words of sentence in dictionary
-     * @param category category of sentence
-     * @param text sentence content
-     */
-    private void putWords(String category, String text){
-        String[] words = text.split("\\W");
-        for(String word : words){
-            if(!word.equals("")){
-                if(termFrequency.get(category).containsKey(word)){
-                    int count = (int)termFrequency.get(category).get(word);
-                    termFrequency.get(category).put(word, count + 1);
-                }else {
-                    termFrequency.get(category).put(word, 1);
-                }
-            }
-        }
-    }
-
     private HashMap<String, Integer> countWordsPerCategories(HashMap<String, HashMap> bagOfWords){
         HashMap<String, Integer> wordPerCategoryCount = new HashMap<>();
         for(String category : bagOfWords.keySet()){
@@ -60,15 +39,29 @@ public class TermFrequency {
         return wordPerCategoryCount;
     }
 
-    private void countTermFrequency(HashMap<String, Integer> categoryFrequency, HashMap<String, HashMap> termFrequency){
+    /**
+     * Method counts the term frequency
+     * @param categoryFrequency table of nuber of words per category
+     * @param bagOfWords bag of words, from which everything is calculated
+     * @return table of term frequency
+     */
+    private HashMap<String, HashMap> countTermFrequency(HashMap<String, Integer> categoryFrequency, HashMap<String, HashMap> bagOfWords){
+        HashMap<String, HashMap> termFrequency = (HashMap<String, HashMap>) bagOfWords.clone();
         for(String key : categoryFrequency.keySet()){
-            HashMap<String, Integer> helpHash = termFrequency.get(key);
+            HashMap<String, Integer> helpHash = bagOfWords.get(key);
             for(String key2 : helpHash.keySet()){
                 termFrequency.get(key).put(key2, count(categoryFrequency.get(key), helpHash.get(key2)));
             }
         }
+        return termFrequency;
     }
 
+    /**
+     * Method count term frequency (number of occurrences of the word/total number of words in category)
+     * @param totalNumberOfWordsInCategory total number of words in category
+     * @param numberOfWord number of occurrence of one word
+     * @return term frequency
+     */
     private double count(int totalNumberOfWordsInCategory, int numberOfWord){
         return (double)numberOfWord/(double)totalNumberOfWordsInCategory;
     }

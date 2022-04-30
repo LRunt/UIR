@@ -48,7 +48,7 @@ public class Main {
         List<String> listOfLines = loadData("data.txt");
         List<Sentence> trainData = createTrainData(listOfLines);
         BagOfWords bagOfWords = new BagOfWords(trainData);
-        TermFrequency termFrequency = new TermFrequency(trainData);
+        TermFrequency termFrequency = new TermFrequency(bagOfWords);
         System.out.println();
     }
 }

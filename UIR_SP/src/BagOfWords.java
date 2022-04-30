@@ -1,14 +1,15 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 /**
+ * Class {@code BagOfWords} represents bag with categories,
+ * where each category has counted how many words were contained in the training data per category
  * @author Lukas Runt
  * @version 1.0 (28-04-2022)
  */
 public class BagOfWords {
 
-    /** Table of categories */
+    /** Table of words per category */
     private HashMap<String, HashMap> categoriesMap;
 
     /**
@@ -50,5 +51,13 @@ public class BagOfWords {
                 }
             }
         }
+    }
+
+    /**
+     * Getter of bagOfWords
+     * @return HashMap of words per category
+     */
+    public HashMap<String, HashMap> getCategoriesMap() {
+        return categoriesMap;
     }
 }
