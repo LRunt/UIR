@@ -11,11 +11,14 @@ public class Bayes {
 
     /** Table of symptoms*/
     private HashMap<String, HashMap> symptoms;
-    /** sentences to be classified */
+    /** Sentences to be classified */
     private List<Sentence> sentences;
-    /** classified sentences by bayes algorithm*/
-    private List<Sentence> clasifiedSentences;
+    /** Classified sentences by bayes algorithm*/
+    private List<Sentence> classifiedSentences;
+    /** Table of probabilities of categories*/
     private HashMap<String, Double> probabilityOfCategories;
+    /** Minimal value in symptoms*/
+    private double minValue;
 
     /**
      * Constructor of class {@Bayes}
@@ -25,7 +28,81 @@ public class Bayes {
     public Bayes(HashMap<String, HashMap> symptoms, List<Sentence> sentences){
         this.symptoms = symptoms;
         this.sentences = sentences;
-        clasifiedSentences = new ArrayList<>();
+        this.probabilityOfCategories = computeProbabilityOfCategories(symptoms);
+        this.classifiedSentences = classifySentences(sentences, probabilityOfCategories);
+    }
+
+    /**
+     * Method classify sentences
+     * @param sentences sentences which will be classified
+     * @param categoryProbability probabilities of each category
+     * @return list of classified sentences
+     */
+    private List<Sentence> classifySentences(List<Sentence> sentences, HashMap<String, Double> categoryProbability){
+        List<Sentence> classifiedSentences = new ArrayList<>();
+        for(Sentence sentence : sentences){
+            HashMap<String, Double> probabilities = computeTableOfProbabilities(sentence.text, categoryProbability);
+            String assignedCategory = assignCategory(probabilities);
+            classifiedSentences.add(new Sentence(assignedCategory, sentence.text));
+        }
+        return classifiedSentences;
+    }
+
+    /**
+     * Method picks the category with the biggest probability
+     * @param probabilities probabilities of each categories
+     * @return the category with the biggest probability
+     */
+    private String assignCategory(HashMap<String, Double> probabilities){
+        double maxProbability = 0;
+        String nameOfCategory = "";
+        for(String key : probabilities.keySet()){
+            if(maxProbability < probabilities.get(key)){
+                maxProbability = probabilities.get(key);
+                nameOfCategory = key;
+            }
+        }
+        return nameOfCategory;
+    }
+
+    /**
+     * Method computes all category probabilities
+     * @param sentence
+     * @param categoryProbability
+     * @return probabilities of all categories
+     */
+    private HashMap<String, Double> computeTableOfProbabilities(String sentence, HashMap<String, Double> categoryProbability){
+        HashMap<String, Double> probabilityTable = new HashMap<>();
+        for(String categoryKey : categoryProbability.keySet()){
+            probabilityTable.put(categoryKey, computeProbability(sentence, categoryKey, categoryProbability, this.symptoms, this.minValue));
+        }
+        return probabilityTable;
+    }
+
+    /**
+     * Method counts the probability, that sentence asserts to the category
+     * @param sentence sentence who will assigned
+     * @param category category which is counted
+     * @param categoryProbability probability of each category
+     * @param symptoms symptoms of the train data
+     * @param minimalValue minimal value of symptom
+     * @return probability of one category
+     */
+    private double computeProbability(String sentence, String category, HashMap<String, Double> categoryProbability,HashMap<String, HashMap> symptoms, double minimalValue){
+        String[] words = sentence.split("\\W");
+        double[] probalities = new double[words.length];
+        for(int i = 0; i < words.length; i++){
+            if(symptoms.get(category).containsKey(words[i])){
+                probalities[i] = (double)symptoms.get(category).get(words[i]) + minimalValue;
+            }else{
+                probalities[i] = minimalValue;
+            }
+        }
+        double probality = categoryProbability.get(category);
+        for(int i = 0; i < probalities.length; i++){
+            probality *= probalities[i];
+        }
+        return probality;
     }
 
     /**
@@ -50,12 +127,18 @@ public class Bayes {
      */
     private double sumOfAllSymptoms(HashMap<String, HashMap> symptoms){
         double sum = 0;
+        double minimalValue = Double.MAX_VALUE;
         for(String categoryKey : symptoms.keySet()){
             HashMap<String, Double> helpHash = symptoms.get(categoryKey);
             for(String wordKey : helpHash.keySet()){
-                sum += (double)symptoms.get(categoryKey).get(wordKey);
+                double symptomValue = (double)symptoms.get(categoryKey).get(wordKey);
+                sum += symptomValue;
+                if(minimalValue > symptomValue){
+                    minimalValue = symptomValue;
+                }
             }
         }
+        this.minValue = minimalValue;
         return sum;
     }
 
@@ -67,10 +150,8 @@ public class Bayes {
     private double sumOfSymptomPerCategory(HashMap<String, Double> categorySymptoms){
         double sumOfCategory = 0;
         for(String wordKey : categorySymptoms.keySet()){
-            sumOfCategory += (double)categorySymptoms.get(wordKey);
+            sumOfCategory += categorySymptoms.get(wordKey);
         }
         return sumOfCategory;
     }
-
-
 }

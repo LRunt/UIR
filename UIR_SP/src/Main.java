@@ -27,11 +27,11 @@ public class Main {
     }
 
     /**
-     * Method creates train data
+     * Method creates sentences
      * @param data list of lines
-     * @return list of train data
+     * @return list of sentences
      */
-    public static List<Sentence> createTrainData(List<String> data){
+    public static List<Sentence> createSentences(List<String> data){
         List<Sentence> trainData = new ArrayList<>();
         for(String sentence : data){
             String[] splitData = sentence.split(" ", 2);
@@ -45,11 +45,14 @@ public class Main {
      * @param args input arguments
      */
     public static void main(String[] args){
-        List<String> listOfLines = loadData("data.txt");
-        List<Sentence> trainData = createTrainData(listOfLines);
+        List<String> listOfLines = loadData("train.txt");
+        List<Sentence> trainData = createSentences(listOfLines);
+        List<String> listOfTestSentences = loadData("train.txt");
+        List<Sentence> testData = createSentences(listOfTestSentences);
         BagOfWords bagOfWords = new BagOfWords(trainData);
         TermFrequency termFrequency = new TermFrequency(bagOfWords);
         TF_IDF inverseDocumentFrequency = new TF_IDF(termFrequency, bagOfWords);
+        Bayes bayesClassification = new Bayes(bagOfWords.getCategoriesMap(), testData);
         System.out.println();
     }
 }
