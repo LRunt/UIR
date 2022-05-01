@@ -53,7 +53,7 @@ public class TF_IDF {
         HashMap<String, HashMap> termFrequencyInverseDocumentFrequency = new HashMap<>();
         for(String categoryKey : termFrequency.keySet()){
             termFrequencyInverseDocumentFrequency.put(categoryKey, new HashMap<String, Double>());
-            HashMap<String, Integer> helpHash = termFrequency.get(categoryKey);
+            HashMap<String, Double> helpHash = termFrequency.get(categoryKey);
             for(String wordKey : helpHash.keySet()){
                 termFrequencyInverseDocumentFrequency.get(categoryKey).put(wordKey, countIDF(occurencyBetweenCategories.get(wordKey), occurencyBetweenCategories.size()) * (Double)termFrequency.get(categoryKey).get(wordKey));
             }
@@ -69,5 +69,13 @@ public class TF_IDF {
      */
     private Double countIDF(int occurencyBetweenCategories, int numberOfCategories){
         return Math.log(numberOfCategories/occurencyBetweenCategories);
+    }
+
+    /**
+     * Getter of term frequency - inverse document frequency
+     * @return term frequency - inverse document frequency
+     */
+    public HashMap<String, HashMap> getTermFrequencyInverseDocumentFrequency(){
+        return termFrequencyInverseDocumentFrequency;
     }
 }
