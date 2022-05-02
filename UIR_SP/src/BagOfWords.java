@@ -7,31 +7,30 @@ import java.util.List;
  * @author Lukas Runt
  * @version 1.0 (28-04-2022)
  */
-public class BagOfWords {
+public class BagOfWords implements IParametriable{
 
     /** Table of words per category */
-    private HashMap<String, HashMap> categoriesMap;
+    private HashMap<String, HashMap> symptoms;
 
     /**
      * Constructor of class {@code BagOfWords}
      * @param trainData training sentences from inputFile
      */
-    public BagOfWords(List<Sentence> trainData){
-        this.categoriesMap = new HashMap<>();
-        fillTables(trainData);
+    public BagOfWords(List<Sentence> trainData, List<String> listOfCategories){
+        this.symptoms = Utils.createHashMapOfCategories(listOfCategories);
+        symptoms = createSymptoms(Utils.createHashMapOfCategories(listOfCategories), trainData);
     }
 
     /**
      * Method fill table with train data
      * @param trainData train sentences
      */
-    private void fillTables(List<Sentence> trainData){
+    @Override
+    public HashMap<String, HashMap> createSymptoms(HashMap<String, HashMap> emptyMap, List<Sentence> trainData) {
         for(Sentence sentence : trainData){
-          if(!categoriesMap.containsKey(sentence.category)) {
-              categoriesMap.put(sentence.category, new HashMap<String, Double>());
-          }
-              putWords(sentence.category, sentence.text);
+            putWords(sentence.category, sentence.text, emptyMap);
         }
+        return emptyMap;
     }
 
     /**
@@ -39,15 +38,15 @@ public class BagOfWords {
      * @param category category of sentence
      * @param text sentence content
      */
-    private void putWords(String category, String text){
+    private void putWords(String category, String text, HashMap<String, HashMap> emptyMap){
         String[] words = text.split("\\W");
         for(String word : words){
             if(!word.equals("")){
-                if(categoriesMap.get(category).containsKey(word)){
-                    double count = (double)categoriesMap.get(category).get(word);
-                    categoriesMap.get(category).put(word, count + 1.0);
+                if(emptyMap.get(category).containsKey(word)){
+                    double count = (double) emptyMap.get(category).get(word);
+                    emptyMap.get(category).put(word, count + 1.0);
                 }else {
-                    categoriesMap.get(category).put(word, 1.0);
+                    emptyMap.get(category).put(word, 1.0);
                 }
             }
         }
@@ -57,7 +56,8 @@ public class BagOfWords {
      * Getter of bagOfWords
      * @return HashMap of words per category
      */
-    public HashMap<String, HashMap> getCategoriesMap() {
-        return categoriesMap;
+    @Override
+    public HashMap<String, HashMap> getSymptoms() {
+        return symptoms;
     }
 }

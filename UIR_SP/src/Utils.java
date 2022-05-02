@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -6,6 +7,19 @@ import java.util.List;
  * @version 1.0 (02-05-2022)
  */
 public class Utils {
+
+    /**
+     * Method creates list of hashMap of symptoms
+     * @param categories list of categories
+     * @return empty hashMap of symptoms
+     */
+    public static HashMap<String, HashMap> createHashMapOfCategories(List<String> categories){
+        HashMap<String, HashMap> emptySymptoms = new HashMap<>();
+        for(String category : categories){
+            emptySymptoms.put(category, new HashMap<>());
+        }
+        return emptySymptoms;
+    }
 
     /**
      * Method compares result

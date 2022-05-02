@@ -46,22 +46,20 @@ public class Main {
      */
     public static void main(String[] args){
         Utils utils = new Utils();
-        List<String> listOfLines = loadData("train.txt");
+        List<String> listOfCategories = loadData(args[0]);
+        List<String> listOfLines = loadData(args[1]);
         List<Sentence> trainData = createSentences(listOfLines);
-        List<String> listOfTestSentences = loadData("data.txt");
+        List<String> listOfTestSentences = loadData(args[1]);
         List<Sentence> testData = createSentences(listOfTestSentences);
-        BagOfWords bagOfWords = new BagOfWords(trainData);
-        TermFrequency termFrequency = new TermFrequency(bagOfWords);
-        TF_IDF inverseDocumentFrequency = new TF_IDF(termFrequency, bagOfWords);
-        Bayes bayesClassification = new Bayes(bagOfWords.getCategoriesMap(), testData);
-        System.out.printf("Bag of words: %.02f", utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
-        System.out.println("%");
-        bayesClassification = new Bayes(termFrequency.getTermFrequency(), testData);
-        System.out.printf("Term Frequency: %.02f", utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
-        System.out.println("%");
-        bayesClassification = new Bayes(inverseDocumentFrequency.getTermFrequencyInverseDocumentFrequency(), testData);
-        System.out.printf("TF-IDF: %.02f", utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
-        System.out.println("%");
+        BagOfWords bagOfWords = new BagOfWords(trainData, listOfCategories);
+        TermFrequency termFrequency = new TermFrequency(trainData, listOfCategories);
+        TF_IDF inverseDocumentFrequency = new TF_IDF(trainData, listOfCategories);
+        Bayes bayesClassification = new Bayes(bagOfWords.getSymptoms(), testData);
+        System.out.printf("Bag of words: %.02f%%\n", utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
+        bayesClassification = new Bayes(termFrequency.getSymptoms(), testData);
+        System.out.printf("Term Frequency: %.02f%%\n", utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
+        bayesClassification = new Bayes(inverseDocumentFrequency.getSymptoms(), testData);
+        System.out.printf("TF-IDF: %.02f%%\n", utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
         System.out.println();
     }
 }

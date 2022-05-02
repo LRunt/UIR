@@ -1,24 +1,33 @@
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Class {@code TermFrequency} represents term frequency in every category
  * @author Lukas Runt
  * @version 1.0 (30-04-2022)
  */
-public class TermFrequency {
+public class TermFrequency implements IParametriable{
 
     /** HashMap with term frequency*/
-    private HashMap<String,HashMap> termFrequency;
-    /** HashMap which stores how many words are in each category*/
-    private HashMap<String, Double> numberOfWordsPerCategory;
+    private HashMap<String,HashMap> symptoms;
 
     /**
      * Constructor of class {@code TermFrequency}
      * @param countedBagOfWords bagOfWords, where in counted how many times the words appear in each category
+     * @param trainData train data from which will the symptoms created
      */
-    public TermFrequency(BagOfWords countedBagOfWords){
-        this.numberOfWordsPerCategory = countWordsPerCategories(countedBagOfWords.getCategoriesMap());
-        this.termFrequency = countTermFrequency(numberOfWordsPerCategory, countedBagOfWords.getCategoriesMap());
+    public TermFrequency(BagOfWords countedBagOfWords, List<Sentence> trainData){
+       this.symptoms = createSymptoms(countedBagOfWords.getSymptoms(), trainData);
+    }
+
+    /**
+     * Constructor of class {@code TermFrequency}
+     * @param trainData train data from which will the symptoms created
+     * @param  listOfCategories list of possible categories
+     */
+    public TermFrequency(List<Sentence> trainData, List<String> listOfCategories){
+        BagOfWords bag = new BagOfWords(trainData, listOfCategories);
+        this.symptoms = createSymptoms(bag.getSymptoms(), trainData);
     }
 
     /**
@@ -41,38 +50,21 @@ public class TermFrequency {
 
     /**
      * Method counts the term frequency
-     * @param categoryFrequency table of nuber of words per category
-     * @param bagOfWords bag of words, from which everything is calculated
+     * @param emptyMap map of bagOfWords
+     * @param trainData training data
      * @return table of term frequency
      */
-    private HashMap<String, HashMap> countTermFrequency(HashMap<String, Double> categoryFrequency, HashMap<String, HashMap> bagOfWords){
-        HashMap<String, HashMap> termFrequency = createDeepCopy(bagOfWords);
-        for(String key : categoryFrequency.keySet()){
-            HashMap<String, Double> helpHash = bagOfWords.get(key);
+    @Override
+    public HashMap<String, HashMap> createSymptoms(HashMap<String, HashMap> emptyMap, List<Sentence> trainData) {
+        HashMap<String, Double> numberOfWordsPerCategory = countWordsPerCategories(emptyMap);
+        for(String key : numberOfWordsPerCategory.keySet()){
+            HashMap<String, Double> helpHash = emptyMap.get(key);
             for(String key2 : helpHash.keySet()){
-                termFrequency.get(key).put(key2, count(categoryFrequency.get(key), helpHash.get(key2)));
+                emptyMap.get(key).put(key2, count(numberOfWordsPerCategory.get(key), helpHash.get(key2)));
             }
         }
-        return termFrequency;
+        return emptyMap;
     }
-
-    /**
-     * Method creates deep copy of hashMap
-     * @param originalHashMap draft of the copied hashMap
-     * @return deep copy of original hashMap
-     */
-    private HashMap<String, HashMap> createDeepCopy(HashMap<String, HashMap> originalHashMap){
-        HashMap<String, HashMap> deepCopy = new HashMap<>();
-        for(String categoryKey : originalHashMap.keySet()){
-            HashMap<String, Double> helpHash = originalHashMap.get(categoryKey);
-            deepCopy.put(categoryKey, new HashMap<String, Double>());
-            for(String wordKey : helpHash.keySet()){
-                deepCopy.get(categoryKey).put(wordKey, helpHash.get(wordKey));
-            }
-        }
-        return deepCopy;
-    }
-
 
     /**
      * Method count term frequency (number of occurrences of the word/total number of words in category)
@@ -88,7 +80,8 @@ public class TermFrequency {
      * Getter of termFrequency
      * @return termFrequency
      */
-    public HashMap<String, HashMap> getTermFrequency() {
-        return termFrequency;
+    @Override
+    public HashMap<String, HashMap> getSymptoms() {
+        return symptoms;
     }
 }
