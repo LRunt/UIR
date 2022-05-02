@@ -52,7 +52,7 @@ public class Main {
         BagOfWords bagOfWords = new BagOfWords(trainData);
         TermFrequency termFrequency = new TermFrequency(bagOfWords);
         TF_IDF inverseDocumentFrequency = new TF_IDF(termFrequency, bagOfWords);
-        Bayes bayesClassification = new Bayes(bagOfWords.getCategoriesMap(), testData);
+        Bayes bayesClassification = new Bayes(termFrequency.getTermFrequency(), testData);
         System.out.println();
     }
 }

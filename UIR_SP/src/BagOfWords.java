@@ -28,7 +28,7 @@ public class BagOfWords {
     private void fillTables(List<Sentence> trainData){
         for(Sentence sentence : trainData){
           if(!categoriesMap.containsKey(sentence.category)) {
-              categoriesMap.put(sentence.category, new HashMap<>());
+              categoriesMap.put(sentence.category, new HashMap<String, Double>());
           }
               putWords(sentence.category, sentence.text);
         }
@@ -44,10 +44,10 @@ public class BagOfWords {
         for(String word : words){
             if(!word.equals("")){
                 if(categoriesMap.get(category).containsKey(word)){
-                    int count = (int)categoriesMap.get(category).get(word);
-                    categoriesMap.get(category).put(word, count + 1);
+                    double count = (double)categoriesMap.get(category).get(word);
+                    categoriesMap.get(category).put(word, count + 1.0);
                 }else {
-                    categoriesMap.get(category).put(word, 1);
+                    categoriesMap.get(category).put(word, 1.0);
                 }
             }
         }

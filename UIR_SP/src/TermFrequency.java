@@ -10,7 +10,7 @@ public class TermFrequency {
     /** HashMap with term frequency*/
     private HashMap<String,HashMap> termFrequency;
     /** HashMap which stores how many words are in each category*/
-    private HashMap<String, Integer> numberOfWordsPerCategory;
+    private HashMap<String, Double> numberOfWordsPerCategory;
 
     /**
      * Constructor of class {@code TermFrequency}
@@ -26,11 +26,11 @@ public class TermFrequency {
      * @param bagOfWords bag of words, from which everything is calculated
      * @return table with numbers of words per category
      */
-    private HashMap<String, Integer> countWordsPerCategories(HashMap<String, HashMap> bagOfWords){
-        HashMap<String, Integer> wordPerCategoryCount = new HashMap<>();
+    private HashMap<String, Double> countWordsPerCategories(HashMap<String, HashMap> bagOfWords){
+        HashMap<String, Double> wordPerCategoryCount = new HashMap<>();
         for(String category : bagOfWords.keySet()){
-            int numberOfWords = 0;
-            HashMap<String, Integer> helpHash = bagOfWords.get(category);
+            double numberOfWords = 0;
+            HashMap<String, Double> helpHash = bagOfWords.get(category);
             for(String word : helpHash.keySet()){
                 numberOfWords += helpHash.get(word);
             }
@@ -45,10 +45,10 @@ public class TermFrequency {
      * @param bagOfWords bag of words, from which everything is calculated
      * @return table of term frequency
      */
-    private HashMap<String, HashMap> countTermFrequency(HashMap<String, Integer> categoryFrequency, HashMap<String, HashMap> bagOfWords){
-        HashMap<String, HashMap> termFrequency = (HashMap<String, HashMap>) bagOfWords.clone();
+    private HashMap<String, HashMap> countTermFrequency(HashMap<String, Double> categoryFrequency, HashMap<String, HashMap> bagOfWords){
+        HashMap<String, HashMap> termFrequency = createDeepCopy(bagOfWords);
         for(String key : categoryFrequency.keySet()){
-            HashMap<String, Integer> helpHash = bagOfWords.get(key);
+            HashMap<String, Double> helpHash = bagOfWords.get(key);
             for(String key2 : helpHash.keySet()){
                 termFrequency.get(key).put(key2, count(categoryFrequency.get(key), helpHash.get(key2)));
             }
@@ -57,13 +57,31 @@ public class TermFrequency {
     }
 
     /**
+     * Method creates deep copy of hashMap
+     * @param originalHashMap draft of the copied hashMap
+     * @return deep copy of original hashMap
+     */
+    private HashMap<String, HashMap> createDeepCopy(HashMap<String, HashMap> originalHashMap){
+        HashMap<String, HashMap> deepCopy = new HashMap<>();
+        for(String categoryKey : originalHashMap.keySet()){
+            HashMap<String, Double> helpHash = originalHashMap.get(categoryKey);
+            deepCopy.put(categoryKey, new HashMap<String, Double>());
+            for(String wordKey : helpHash.keySet()){
+                deepCopy.get(categoryKey).put(wordKey, helpHash.get(wordKey));
+            }
+        }
+        return deepCopy;
+    }
+
+
+    /**
      * Method count term frequency (number of occurrences of the word/total number of words in category)
      * @param totalNumberOfWordsInCategory total number of words in category
      * @param numberOfWord number of occurrence of one word
      * @return term frequency
      */
-    private double count(int totalNumberOfWordsInCategory, int numberOfWord){
-        return (double)numberOfWord/(double)totalNumberOfWordsInCategory;
+    private double count(double totalNumberOfWordsInCategory, double numberOfWord){
+        return numberOfWord/totalNumberOfWordsInCategory;
     }
 
     /**
