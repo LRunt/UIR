@@ -154,4 +154,12 @@ public class Bayes {
         }
         return sumOfCategory;
     }
+
+    /**
+     * Getter of classified sentences
+     * @return classified sentences
+     */
+    public List<Sentence> getClassifiedSentences() {
+        return classifiedSentences;
+    }
 }

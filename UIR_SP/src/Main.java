@@ -45,14 +45,23 @@ public class Main {
      * @param args input arguments
      */
     public static void main(String[] args){
+        Utils utils = new Utils();
         List<String> listOfLines = loadData("train.txt");
         List<Sentence> trainData = createSentences(listOfLines);
-        List<String> listOfTestSentences = loadData("train.txt");
+        List<String> listOfTestSentences = loadData("data.txt");
         List<Sentence> testData = createSentences(listOfTestSentences);
         BagOfWords bagOfWords = new BagOfWords(trainData);
         TermFrequency termFrequency = new TermFrequency(bagOfWords);
         TF_IDF inverseDocumentFrequency = new TF_IDF(termFrequency, bagOfWords);
-        Bayes bayesClassification = new Bayes(termFrequency.getTermFrequency(), testData);
+        Bayes bayesClassification = new Bayes(bagOfWords.getCategoriesMap(), testData);
+        System.out.printf("Bag of words: %.02f", utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
+        System.out.println("%");
+        bayesClassification = new Bayes(termFrequency.getTermFrequency(), testData);
+        System.out.printf("Term Frequency: %.02f", utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
+        System.out.println("%");
+        bayesClassification = new Bayes(inverseDocumentFrequency.getTermFrequencyInverseDocumentFrequency(), testData);
+        System.out.printf("TF-IDF: %.02f", utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
+        System.out.println("%");
         System.out.println();
     }
 }
