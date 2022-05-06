@@ -49,7 +49,7 @@ public class Main {
         List<String> listOfCategories = loadData(args[0]);
         List<String> listOfLines = loadData(args[1]);
         List<Sentence> trainData = createSentences(listOfLines);
-        List<String> listOfTestSentences = loadData(args[1]);
+        List<String> listOfTestSentences = loadData(args[2]);
         List<Sentence> testData = createSentences(listOfTestSentences);
         BagOfWords bagOfWords = new BagOfWords(trainData, listOfCategories);
         TermFrequency termFrequency = new TermFrequency(trainData, listOfCategories);
@@ -60,6 +60,8 @@ public class Main {
         System.out.printf("Term Frequency: %.02f%%\n", utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
         bayesClassification = new Bayes(inverseDocumentFrequency.getSymptoms(), testData);
         System.out.printf("TF-IDF: %.02f%%\n", utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
+        KNearestNeighbors neigbourgsh = new KNearestNeighbors(trainData, testData, 3);
+        System.out.printf("knn: %.02f%%\n", utils.compareResults(testData, neigbourgsh.getClassifiedSentences()));
         System.out.println();
     }
 }

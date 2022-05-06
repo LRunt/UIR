@@ -39,7 +39,7 @@ public class BagOfWords implements IParametriable{
      * @param text sentence content
      */
     private void putWords(String category, String text, HashMap<String, HashMap> emptyMap){
-        String[] words = text.split("\\W");
+        String[] words = text.split("[^0-9A-Za-z']");
         for(String word : words){
             if(!word.equals("")){
                 if(emptyMap.get(category).containsKey(word)){
