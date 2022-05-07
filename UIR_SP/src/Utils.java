@@ -41,4 +41,34 @@ public class Utils {
         }
         return ((double)correctlyClassified/(double)numberOfSentences)*100;
     }
+
+    /**
+     * Method counts Term Frequency - Inverse Document Frequency of all sentences
+     * @param sentences list of sentences where we want count the TF-IDF
+     */
+    public static void countTFIDF(List<Sentence> sentences){
+        int numberOfSentences = sentences.size();
+        HashMap<String, Integer> numberOfOccurrences = new HashMap<>();
+        for(Sentence sentence : sentences){
+            for(String word : sentence.BOW.keySet()){
+                if(numberOfOccurrences.containsKey(word)){
+                    int count = numberOfOccurrences.get(word);
+                    numberOfOccurrences.put(word, count + 1);
+                }else{
+                    numberOfOccurrences.put(word, 1);
+                }
+            }
+        }
+        for(Sentence sentence : sentences){
+            for(String word : sentence.TF.keySet()){
+                double tfidf = Math.log((double)numberOfOccurrences.get(word)/(double)numberOfSentences);
+                sentence.TFIDF.put(word, tfidf * sentence.TF.get(word));
+            }
+            sentence.symptoms = sentence.TFIDF;
+        }
+    }
+
+    public static void createModel(){
+
+    }
 }

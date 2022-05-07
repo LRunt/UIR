@@ -26,11 +26,11 @@ public class KNearestNeighbors {
     private Sentence classifySentence(Sentence sentence, List<Sentence> trainSentences){
         List<SentenceWithDistance> distanceOfSentences = new ArrayList<>();
         for(Sentence trainSentence : trainSentences){
-            distanceOfSentences.add(new SentenceWithDistance(trainSentence, euclideanDistance(trainSentence.BOW, sentence.BOW)));
+            distanceOfSentences.add(new SentenceWithDistance(trainSentence, euclideanDistance(trainSentence.symptoms, sentence.symptoms)));
         }
         Collections.sort(distanceOfSentences);
         HashMap<String, Integer> numberOfOccurrences = new HashMap<>();
-        for(int i = 0; i < 3; i++){
+        for(int i = 0; i < 5; i++){
             String category = distanceOfSentences.get(i).sentence.category;
             if(numberOfOccurrences.containsKey(category)){
                 int count = numberOfOccurrences.get(category);

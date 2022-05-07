@@ -41,16 +41,41 @@ public class Main {
     }
 
     /**
+     * Method creates symptoms
+     * @param method
+     * @param sentences
+     */
+    public static void setMethod(String method, List<Sentence> sentences){
+        for(Sentence sentence : sentences){
+            if(method.equals("BOW") || method.equals("Bag of words")){
+                sentence.symptoms = sentence.BOW;
+            }else if(method.equals("TF") || method.equals("Term Frequency")){
+                sentence.symptoms = sentence.TF;
+            }else if(method.equals("TF-IDF") || method.equals("Term Frequency - Inverse Document Frequency")){
+                Utils.countTFIDF(sentences);
+            }else {
+                System.out.println("Wrong parameter function!");
+            }
+        }
+    }
+
+    /**
      * Entry point of the program
      * @param args input arguments
      */
     public static void main(String[] args){
         Utils utils = new Utils();
         List<String> listOfCategories = loadData(args[0]);
-        List<String> listOfLines = loadData(args[1]);
+        List<String> listOfLines = loadData(args[2]);
         List<Sentence> trainData = createSentences(listOfLines);
-        List<String> listOfTestSentences = loadData(args[2]);
+        //Utils.countTFIDF(trainData);
+        List<String> listOfTestSentences = loadData(args[1]);
         List<Sentence> testData = createSentences(listOfTestSentences);
+        //Utils.countTFIDF(testData);
+
+        setMethod(args[3], trainData);
+        setMethod(args[3], testData);
+
         BagOfWords bagOfWords = new BagOfWords(trainData, listOfCategories);
         TermFrequency termFrequency = new TermFrequency(trainData, listOfCategories);
         TF_IDF inverseDocumentFrequency = new TF_IDF(trainData, listOfCategories);

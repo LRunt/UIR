@@ -12,6 +12,12 @@ public class Sentence {
     public String text;
     /** Bag of words of one sentence*/
     public HashMap<String, Double> BOW;
+    /** Term frequency of one sentence*/
+    public HashMap<String, Double> TF;
+    /** Term Frequency - Inverse Document Frequency of sentence*/
+    public HashMap<String, Double> TFIDF = new HashMap<>();
+    /** Symptoms of sentence*/
+    public HashMap<String, Double> symptoms;
 
     /**
      * Constructor of class sentence
@@ -21,17 +27,17 @@ public class Sentence {
     public Sentence(String category, String text){
         this.category = category;
         this.text = text;
-        this.BOW = createBagOfWords(this.text);
+        this.BOW = createBagOfWords();
+        this.TF = createTermFrequency();
     }
 
     /**
      * Method create bag of words
-     * @param sentence sentence for which a bag of words is created
      * @return bag of word of sentence
      */
-    private HashMap<String, Double> createBagOfWords(String sentence) {
+    public HashMap<String, Double> createBagOfWords() {
         HashMap<String, Double> bagOfWords = new HashMap<>();
-        String[] words = sentence.split("[^0-9A-Za-z']");
+        String[] words = text.split("[^0-9A-Za-z']");
         for (String word : words) {
             if (!word.equals("")) {
                 if (bagOfWords.containsKey(word)) {
@@ -43,5 +49,18 @@ public class Sentence {
             }
         }
         return bagOfWords;
+    }
+
+    /**
+     * Metohd creates term frequency of words in
+     * @return term frequency
+     */
+    public HashMap<String, Double> createTermFrequency(){
+        HashMap<String, Double> termFrequency = new HashMap<>();
+        double wordsInSentence = BOW.values().stream().reduce(0.0, Double::sum);
+        for(String word : BOW.keySet()){
+            termFrequency.put(word, BOW.get(word)/wordsInSentence);
+        }
+        return termFrequency;
     }
 }
