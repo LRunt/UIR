@@ -7,7 +7,10 @@ public class KNearestNeighbors {
 
     private List<Sentence> classifiedSentences;
 
+    private int k;
+
     public KNearestNeighbors(List<Sentence> symptoms, List<Sentence> sentences, int k){
+        this.k = k;
         this.classifiedSentences = classifySentences(symptoms, sentences);
     }
 
@@ -30,7 +33,7 @@ public class KNearestNeighbors {
         }
         Collections.sort(distanceOfSentences);
         HashMap<String, Integer> numberOfOccurrences = new HashMap<>();
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < k; i++){
             String category = distanceOfSentences.get(i).sentence.category;
             if(numberOfOccurrences.containsKey(category)){
                 int count = numberOfOccurrences.get(category);

@@ -7,7 +7,7 @@ import java.util.List;
  * @author Lukas Runt
  * @version 1.0 (28-04-2022)
  */
-public class BagOfWords implements IParametriable{
+public class BagOfWords{
 
     /** Table of words per category */
     private HashMap<String, HashMap> symptoms;
@@ -25,38 +25,25 @@ public class BagOfWords implements IParametriable{
      * Method fill table with train data
      * @param trainData train sentences
      */
-    @Override
     public HashMap<String, HashMap> createSymptoms(HashMap<String, HashMap> emptyMap, List<Sentence> trainData) {
         for(Sentence sentence : trainData){
-            putWords(sentence.category, sentence.text, emptyMap);
-        }
-        return emptyMap;
-    }
-
-    /**
-     * Mathod count increase number of words of sentence in dictionary
-     * @param category category of sentence
-     * @param text sentence content
-     */
-    private void putWords(String category, String text, HashMap<String, HashMap> emptyMap){
-        String[] words = text.split("[^0-9A-Za-z']");
-        for(String word : words){
-            if(!word.equals("")){
-                if(emptyMap.get(category).containsKey(word)){
-                    double count = (double) emptyMap.get(category).get(word);
-                    emptyMap.get(category).put(word, count + 1.0);
-                }else {
-                    emptyMap.get(category).put(word, 1.0);
+            HashMap<String, Double> wordMap = sentence.BOW;
+            for(String word : wordMap.keySet()){
+                if (emptyMap.get(sentence.category).containsKey(word)) {
+                    double count = (double)emptyMap.get(sentence.category).get(word);
+                    emptyMap.get(sentence.category).put(word, count + 1);
+                } else {
+                    emptyMap.get(sentence.category).put(word, 1.0);
                 }
             }
         }
+        return emptyMap;
     }
 
     /**
      * Getter of bagOfWords
      * @return HashMap of words per category
      */
-    @Override
     public HashMap<String, HashMap> getSymptoms() {
         return symptoms;
     }

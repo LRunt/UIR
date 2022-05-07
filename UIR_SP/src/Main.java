@@ -53,10 +53,25 @@ public class Main {
                 sentence.symptoms = sentence.TF;
             }else if(method.equals("TF-IDF") || method.equals("Term Frequency - Inverse Document Frequency")){
                 Utils.countTFIDF(sentences);
+                break;
             }else {
                 System.out.println("Wrong parameter function!");
             }
         }
+    }
+
+    public static void allMethods(List<Sentence> trainData, List<Sentence> testData, List<String> listOfCategories){
+        BagOfWords bagOfWords = new BagOfWords(trainData, listOfCategories);
+        TermFrequency termFrequency = new TermFrequency(trainData, listOfCategories);
+        TF_IDF inverseDocumentFrequency = new TF_IDF(trainData, listOfCategories);
+        Bayes bayesClassification = new Bayes(bagOfWords.getSymptoms(), testData);
+        System.out.printf("Bayes - Bag of words: %.02f%%\n", Utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
+        bayesClassification = new Bayes(termFrequency.getSymptoms(), testData);
+        System.out.printf("Bayes - Term Frequency: %.02f%%\n", Utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
+        bayesClassification = new Bayes(inverseDocumentFrequency.getSymptoms(), testData);
+        System.out.printf("Bayes - TF-IDF: %.02f%%\n", Utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
+        KNearestNeighbors neighbors = new KNearestNeighbors(trainData, testData, 5);
+        System.out.printf("knn - BOW: %.02f%%\n", Utils.compareResults(testData, neighbors.getClassifiedSentences()));
     }
 
     /**
@@ -76,17 +91,6 @@ public class Main {
         setMethod(args[3], trainData);
         setMethod(args[3], testData);
 
-        BagOfWords bagOfWords = new BagOfWords(trainData, listOfCategories);
-        TermFrequency termFrequency = new TermFrequency(trainData, listOfCategories);
-        TF_IDF inverseDocumentFrequency = new TF_IDF(trainData, listOfCategories);
-        Bayes bayesClassification = new Bayes(bagOfWords.getSymptoms(), testData);
-        System.out.printf("Bag of words: %.02f%%\n", utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
-        bayesClassification = new Bayes(termFrequency.getSymptoms(), testData);
-        System.out.printf("Term Frequency: %.02f%%\n", utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
-        bayesClassification = new Bayes(inverseDocumentFrequency.getSymptoms(), testData);
-        System.out.printf("TF-IDF: %.02f%%\n", utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
-        KNearestNeighbors neigbourgsh = new KNearestNeighbors(trainData, testData, 3);
-        System.out.printf("knn: %.02f%%\n", utils.compareResults(testData, neigbourgsh.getClassifiedSentences()));
-        System.out.println();
+        allMethods(trainData, testData, listOfCategories);
     }
 }

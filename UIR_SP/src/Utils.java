@@ -27,7 +27,7 @@ public class Utils {
      * @param classifiedSentences sentences classified by classifiers
      * @return correct classifications in %
      */
-    public double compareResults(List<Sentence> goodResults,List<Sentence> classifiedSentences){
+    public static double compareResults(List<Sentence> goodResults, List<Sentence> classifiedSentences){
         if(goodResults.size() != classifiedSentences.size()){
             System.err.println("Arrays are not same. They have different size!");
             return 0;
