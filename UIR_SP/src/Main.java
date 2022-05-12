@@ -53,7 +53,6 @@ public class Main {
                 sentence.symptoms = sentence.TF;
             }else if(method.equals("TF-IDF") || method.equals("Term Frequency - Inverse Document Frequency")){
                 Utils.countTFIDF(sentences);
-                break;
             }else {
                 System.out.println("Wrong parameter function!");
             }
@@ -61,17 +60,48 @@ public class Main {
     }
 
     public static void allMethods(List<Sentence> trainData, List<Sentence> testData, List<String> listOfCategories){
-        BagOfWords bagOfWords = new BagOfWords(trainData, listOfCategories);
-        TermFrequency termFrequency = new TermFrequency(trainData, listOfCategories);
-        TF_IDF inverseDocumentFrequency = new TF_IDF(trainData, listOfCategories);
-        Bayes bayesClassification = new Bayes(bagOfWords.getSymptoms(), testData);
+        setMethod("BOW", trainData);
+        setMethod("BOW", testData);
+        SymptomsForBayes symptoms = new SymptomsForBayes(trainData, listOfCategories);
+        Bayes bayesClassification = new Bayes(symptoms.getSymptoms(), testData);
         System.out.printf("Bayes - Bag of words: %.02f%%\n", Utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
-        bayesClassification = new Bayes(termFrequency.getSymptoms(), testData);
-        System.out.printf("Bayes - Term Frequency: %.02f%%\n", Utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
-        bayesClassification = new Bayes(inverseDocumentFrequency.getSymptoms(), testData);
-        System.out.printf("Bayes - TF-IDF: %.02f%%\n", Utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
         KNearestNeighbors neighbors = new KNearestNeighbors(trainData, testData, 5);
-        System.out.printf("knn - BOW: %.02f%%\n", Utils.compareResults(testData, neighbors.getClassifiedSentences()));
+        System.out.printf("knn - Bag of words: %.02f%%\n", Utils.compareResults(testData, neighbors.getClassifiedSentences()));
+        setMethod("TF", trainData);
+        setMethod("TF", testData);
+        symptoms = new SymptomsForBayes(trainData, listOfCategories);
+        bayesClassification = new Bayes(symptoms.getSymptoms(), testData);
+        System.out.printf("Bayes - Term Frequency: %.02f%%\n", Utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
+        neighbors = new KNearestNeighbors(trainData, testData, 5);
+        System.out.printf("knn - Term Frequency: %.02f%%\n", Utils.compareResults(testData, neighbors.getClassifiedSentences()));
+        setMethod("TF-IDF", trainData);
+        setMethod("TF-IDF", testData);
+        symptoms = new SymptomsForBayes(trainData, listOfCategories);
+        bayesClassification = new Bayes(symptoms.getSymptoms(), testData);
+        System.out.printf("Bayes - TF-IDF: %.02f%%\n", Utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
+        neighbors = new KNearestNeighbors(trainData, testData, 5);
+        System.out.printf("knn - TF-IDF: %.02f%%\n", Utils.compareResults(testData, neighbors.getClassifiedSentences()));
+    }
+
+    public static void methodChoice(List<Sentence> trainData, List<Sentence> testData,List<String> listOfCategories, String parameterAlgo, String klasificationAlgo, String modelName){
+        setMethod(parameterAlgo, trainData);
+        setMethod(parameterAlgo, testData);
+        if(klasificationAlgo.equals("KNN")){
+            KNearestNeighbors neighbors = new KNearestNeighbors(trainData, testData, 5);
+            System.out.printf("%s - %s: %.02f%%\n",klasificationAlgo, parameterAlgo, Utils.compareResults(testData, neighbors.getClassifiedSentences()));
+            Utils.saveModel(modelName, trainData, klasificationAlgo);
+        }else if(klasificationAlgo.equals("Bayes")){
+            SymptomsForBayes symptoms = new SymptomsForBayes(trainData, listOfCategories);
+            Bayes bayesClassification = new Bayes(symptoms.getSymptoms(), testData);
+            System.out.printf("%s - %s: %.02f%%\n",klasificationAlgo, parameterAlgo, Utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
+            Utils.saveModel(modelName, trainData, klasificationAlgo);
+        }else{
+            System.out.print("Wrong classification algorithm.\n Try KNN or Bayes.");
+        }
+    }
+
+    public static void loadModel(){
+
     }
 
     /**
@@ -79,18 +109,25 @@ public class Main {
      * @param args input arguments
      */
     public static void main(String[] args){
-        Utils utils = new Utils();
-        List<String> listOfCategories = loadData(args[0]);
-        List<String> listOfLines = loadData(args[2]);
-        List<Sentence> trainData = createSentences(listOfLines);
-        //Utils.countTFIDF(trainData);
-        List<String> listOfTestSentences = loadData(args[1]);
-        List<Sentence> testData = createSentences(listOfTestSentences);
-        //Utils.countTFIDF(testData);
+        if(args.length == 1){
 
-        setMethod(args[3], trainData);
-        setMethod(args[3], testData);
+        }else if(args.length == 3){
+            List<String> listOfCategories = loadData(args[0]);
+            List<String> listOfLines = loadData(args[2]);
+            List<Sentence> trainData = createSentences(listOfLines);
+            List<String> listOfTestSentences = loadData(args[1]);
+            List<Sentence> testData = createSentences(listOfTestSentences);
+            allMethods(trainData, testData, listOfCategories);
+        } else if(args.length == 6){
+            List<String> listOfCategories = loadData(args[0]);
+            List<String> listOfLines = loadData(args[2]);
+            List<Sentence> trainData = createSentences(listOfLines);
+            List<String> listOfTestSentences = loadData(args[1]);
+            List<Sentence> testData = createSentences(listOfTestSentences);
+            methodChoice(trainData, testData, listOfCategories, args[3], args[4], args[5]);
+        }else{
+            System.out.println("Wrong parameters!");
+        }
 
-        allMethods(trainData, testData, listOfCategories);
     }
 }

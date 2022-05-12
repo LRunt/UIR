@@ -1,3 +1,7 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -68,7 +72,26 @@ public class Utils {
         }
     }
 
-    public static void createModel(){
-
+    /**
+     * Method saves the model
+     * @param fileName name of the file
+     */
+    public static void saveModel(String fileName, List<Sentence> trainData, String classifier){
+        try {
+            PrintWriter pw = new PrintWriter(
+                    new BufferedWriter(
+                            new FileWriter(new File(fileName))));
+            pw.println(classifier);
+            for(Sentence sentence : trainData){
+                pw.printf("#%s\n", sentence.category);
+                for(String keyWord : sentence.symptoms.keySet()){
+                    pw.printf("|%s;%f\n", keyWord, sentence.symptoms.get(keyWord));
+                }
+            }
+            pw.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
