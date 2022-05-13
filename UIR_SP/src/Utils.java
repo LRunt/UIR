@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Class {@code Utils} represents utils for classifications
@@ -76,16 +77,16 @@ public class Utils {
      * Method saves the model
      * @param fileName name of the file
      */
-    public static void saveModel(String fileName, List<Sentence> trainData, String classifier){
+    public static void saveModel(String fileName, List<Sentence> trainData, String classifier, String parameter){
         try {
             PrintWriter pw = new PrintWriter(
                     new BufferedWriter(
                             new FileWriter(new File(fileName))));
-            pw.println(classifier);
+            pw.println(classifier + ";" + parameter);
             for(Sentence sentence : trainData){
-                pw.printf("#%s\n", sentence.category);
+                pw.printf("#%s;%d\n", sentence.category, sentence.symptoms.size());
                 for(String keyWord : sentence.symptoms.keySet()){
-                    pw.printf("|%s;%f\n", keyWord, sentence.symptoms.get(keyWord));
+                    pw.printf(Locale.US,"|%s;%f\n", keyWord, sentence.symptoms.get(keyWord));
                 }
             }
             pw.close();

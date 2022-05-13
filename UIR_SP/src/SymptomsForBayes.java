@@ -17,8 +17,22 @@ public class SymptomsForBayes{
      * @param trainData training sentences from inputFile
      */
     public SymptomsForBayes(List<Sentence> trainData, List<String> listOfCategories){
-        this.symptoms = Utils.createHashMapOfCategories(listOfCategories);
-        symptoms = createSymptoms(Utils.createHashMapOfCategories(listOfCategories), trainData);
+        //this.symptoms = Utils.createHashMapOfCategories(listOfCategories);
+        this.symptoms = createSymptoms(Utils.createHashMapOfCategories(listOfCategories), trainData);
+    }
+
+    public SymptomsForBayes(List<Sentence> trainData){
+        this.symptoms = createSymptoms(createEmptyMap(trainData), trainData);
+    }
+
+    private HashMap<String, HashMap> createEmptyMap(List<Sentence> trainSentence){
+        HashMap<String, HashMap> emptyMap = new HashMap<>();
+        for(Sentence sentence : trainSentence){
+            if(!emptyMap.containsKey(sentence.category)){
+                emptyMap.put(sentence.category, new HashMap<>());
+            }
+        }
+        return emptyMap;
     }
 
     /**

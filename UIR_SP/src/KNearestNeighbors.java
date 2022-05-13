@@ -3,8 +3,6 @@ import java.util.stream.Collectors;
 
 public class KNearestNeighbors {
 
-    private List<Sentence> sentences;
-
     private List<Sentence> classifiedSentences;
 
     private int k;
@@ -12,6 +10,10 @@ public class KNearestNeighbors {
     public KNearestNeighbors(List<Sentence> symptoms, List<Sentence> sentences, int k){
         this.k = k;
         this.classifiedSentences = classifySentences(symptoms, sentences);
+    }
+
+    public KNearestNeighbors(int k){
+        this.k = k;
     }
 
     /**
@@ -26,7 +28,7 @@ public class KNearestNeighbors {
         return classifiedSentences;
     }
 
-    private Sentence classifySentence(Sentence sentence, List<Sentence> trainSentences){
+    public Sentence classifySentence(Sentence sentence, List<Sentence> trainSentences){
         List<SentenceWithDistance> distanceOfSentences = new ArrayList<>();
         for(Sentence trainSentence : trainSentences){
             distanceOfSentences.add(new SentenceWithDistance(trainSentence, euclideanDistance(trainSentence.symptoms, sentence.symptoms)));

@@ -31,6 +31,11 @@ public class Sentence {
         this.TF = createTermFrequency();
     }
 
+    public Sentence(String category, HashMap<String, Double> symptoms){
+        this.category = category;
+        this.symptoms = symptoms;
+    }
+
     /**
      * Method create bag of words
      * @return bag of word of sentence

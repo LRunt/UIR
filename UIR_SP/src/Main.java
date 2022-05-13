@@ -1,6 +1,9 @@
+import javax.swing.*;
+import java.awt.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -9,6 +12,8 @@ import java.util.List;
  * @version 1.0 (21-04-2022)
  */
 public class Main {
+
+    public static JLabel category;
 
     /**
      * Method loads data from file
@@ -89,19 +94,53 @@ public class Main {
         if(klasificationAlgo.equals("KNN")){
             KNearestNeighbors neighbors = new KNearestNeighbors(trainData, testData, 5);
             System.out.printf("%s - %s: %.02f%%\n",klasificationAlgo, parameterAlgo, Utils.compareResults(testData, neighbors.getClassifiedSentences()));
-            Utils.saveModel(modelName, trainData, klasificationAlgo);
+            Utils.saveModel(modelName, trainData, klasificationAlgo, parameterAlgo);
         }else if(klasificationAlgo.equals("Bayes")){
             SymptomsForBayes symptoms = new SymptomsForBayes(trainData, listOfCategories);
             Bayes bayesClassification = new Bayes(symptoms.getSymptoms(), testData);
             System.out.printf("%s - %s: %.02f%%\n",klasificationAlgo, parameterAlgo, Utils.compareResults(testData, bayesClassification.getClassifiedSentences()));
-            Utils.saveModel(modelName, trainData, klasificationAlgo);
+            Utils.saveModel(modelName, trainData, klasificationAlgo, parameterAlgo);
         }else{
             System.out.print("Wrong classification algorithm.\n Try KNN or Bayes.");
         }
     }
 
-    public static void loadModel(){
+    public static List<Sentence> loadModel(List<String> listOfLines){
+        List<Sentence> sentences = new ArrayList<>();
+        String category = "";
+        for(int i = 1; i < listOfLines.size(); i++){
+            if(listOfLines.get(i).contains("#")){
+                String[] categoryNumber = listOfLines.get(i).split(";");
+                category = categoryNumber[0].replace("#", "");
+                HashMap<String, Double> symptomsOfSentence = new HashMap<>();
+                for(int j = 0; j < Integer.parseInt(categoryNumber[1]); j++){
+                    i++;
+                    String[] split = listOfLines.get(i).split(";");
+                    symptomsOfSentence.put(split[0].replace("|",""), Double.parseDouble(split[1]));
+                }
+                sentences.add(new Sentence(category, symptomsOfSentence));
+            }
+        }
+        return sentences;
+    }
 
+    private static void classifySentence(String sentence, List<Sentence> model, String algorithm, String parameter) {
+        List<Sentence> testSentence = new ArrayList<>();
+        Sentence sentenceToClassify = new Sentence("None", sentence);
+        testSentence.add(sentenceToClassify);
+        setMethod(parameter, testSentence);
+        if(algorithm.equals("KNN")){
+            KNearestNeighbors knn = new KNearestNeighbors(5);
+            Sentence classifiedSentence = knn.classifySentence(sentenceToClassify, model);
+            category.setText(classifiedSentence.category);
+        }else if(algorithm.equals("Bayes")){
+            SymptomsForBayes bayesSymptoms = new SymptomsForBayes(model);
+            Bayes bayes = new Bayes(bayesSymptoms.getSymptoms(), testSentence);
+            Sentence classifiedSentence = bayes.getClassifiedSentences().get(0);
+            category.setText(classifiedSentence.category);
+        }else{
+            System.out.println("Wrong algorithm of model!");
+        }
     }
 
     /**
@@ -110,7 +149,40 @@ public class Main {
      */
     public static void main(String[] args){
         if(args.length == 1){
+            List<String> modelData = loadData(args[0]);
+            List<Sentence> model = loadModel(modelData);
+            String algorithm = modelData.get(0).split(";")[0];
+            String parameter = modelData.get(0).split(";")[1];
+            JFrame okno = new JFrame();
+            okno.setTitle("UIR - classification of sentences");
 
+            okno.setMinimumSize(new Dimension(550, 150));
+
+            JTextField textField =new JTextField();
+            textField.setPreferredSize(new Dimension(300,20));
+            JButton classifyButton = new JButton("Classify");
+            classifyButton.addActionListener(e -> classifySentence(textField.getText(), model, algorithm, parameter));
+            //classifyButton.setBounds(50,100,150,20);
+
+            okno.setSize(600,150);
+
+            JPanel classifyPanel = new JPanel();
+            classifyPanel.add(textField);
+            classifyPanel.add(classifyButton);
+
+            JPanel labelPanel = new JPanel();
+            JLabel description = new JLabel("The sentence is: ");
+            category = new JLabel("");
+
+            labelPanel.add(description);
+            labelPanel.add(category);
+
+            okno.add(classifyPanel, BorderLayout.CENTER);
+            okno.add(labelPanel, BorderLayout.SOUTH);
+
+            okno.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//skonceni po zavreni okna
+            okno.setLocationRelativeTo(null);//vycentrovat na obrazovce
+            okno.setVisible(true);
         }else if(args.length == 3){
             List<String> listOfCategories = loadData(args[0]);
             List<String> listOfLines = loadData(args[2]);
