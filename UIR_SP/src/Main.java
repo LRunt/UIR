@@ -9,10 +9,11 @@ import java.util.List;
 /**
  * The program for classification of sentences from comics
  * @author Lukas Runt
- * @version 1.0 (21-04-2022)
+ * @version 2.0 (14-05-2022)
  */
 public class Main {
 
+    /** Label in GUI of category of input sentence*/
     public static JLabel category;
 
     /**
@@ -64,6 +65,12 @@ public class Main {
         }
     }
 
+    /**
+     * Method performs all the symptom and classification methods and evaluates its success
+     * @param trainData training dataset
+     * @param testData test dataset
+     * @param listOfCategories list of possible categories
+     */
     public static void allMethods(List<Sentence> trainData, List<Sentence> testData, List<String> listOfCategories){
         setMethod("BOW", trainData);
         setMethod("BOW", testData);
@@ -88,6 +95,15 @@ public class Main {
         System.out.printf("knn - TF-IDF: %.02f%%\n", Utils.compareResults(testData, neighbors.getClassifiedSentences()));
     }
 
+    /**
+     * Method choice which parameter method will be used
+     * @param trainData train dataset
+     * @param testData test dataset
+     * @param listOfCategories list of possible categories
+     * @param parameterAlgo name of parameter algorithm
+     * @param klasificationAlgo name of classification algorithm
+     * @param modelName model which will be used
+     */
     public static void methodChoice(List<Sentence> trainData, List<Sentence> testData,List<String> listOfCategories, String parameterAlgo, String klasificationAlgo, String modelName){
         setMethod(parameterAlgo, trainData);
         setMethod(parameterAlgo, testData);
@@ -105,6 +121,11 @@ public class Main {
         }
     }
 
+    /**
+     * Method load model and creates list of sentences
+     * @param listOfLines list of lines from input file
+     * @return list of sentences
+     */
     public static List<Sentence> loadModel(List<String> listOfLines){
         List<Sentence> sentences = new ArrayList<>();
         String category = "";
@@ -124,6 +145,13 @@ public class Main {
         return sentences;
     }
 
+    /**
+     * Method classifies the sentence
+     * @param sentence sentence which will be classified
+     * @param model model of symptoms
+     * @param algorithm classifying what will be used
+     * @param parameter parameter method what will be used
+     */
     private static void classifySentence(String sentence, List<Sentence> model, String algorithm, String parameter) {
         List<Sentence> testSentence = new ArrayList<>();
         Sentence sentenceToClassify = new Sentence("None", sentence);
@@ -148,11 +176,13 @@ public class Main {
      * @param args input arguments
      */
     public static void main(String[] args){
+        //Opening the GUI - arguments: model
         if(args.length == 1){
             List<String> modelData = loadData(args[0]);
             List<Sentence> model = loadModel(modelData);
             String algorithm = modelData.get(0).split(";")[0];
             String parameter = modelData.get(0).split(";")[1];
+            //Creating GUI
             JFrame okno = new JFrame();
             okno.setTitle("UIR - classification of sentences");
 
@@ -162,7 +192,6 @@ public class Main {
             textField.setPreferredSize(new Dimension(300,20));
             JButton classifyButton = new JButton("Classify");
             classifyButton.addActionListener(e -> classifySentence(textField.getText(), model, algorithm, parameter));
-            //classifyButton.setBounds(50,100,150,20);
 
             okno.setSize(600,150);
 
@@ -183,6 +212,7 @@ public class Main {
             okno.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//skonceni po zavreni okna
             okno.setLocationRelativeTo(null);//vycentrovat na obrazovce
             okno.setVisible(true);
+            //List of all methods with success rates - Arguments: listOfCategories, trainData, testData
         }else if(args.length == 3){
             List<String> listOfCategories = loadData(args[0]);
             List<String> listOfLines = loadData(args[2]);
@@ -190,6 +220,7 @@ public class Main {
             List<String> listOfTestSentences = loadData(args[1]);
             List<Sentence> testData = createSentences(listOfTestSentences);
             allMethods(trainData, testData, listOfCategories);
+            //Creating a model - Arguments: listOfCategories, trainData, testData, parameterAlgorithm, classificationAlgorithm, nameOfModel
         } else if(args.length == 6){
             List<String> listOfCategories = loadData(args[0]);
             List<String> listOfLines = loadData(args[2]);
@@ -197,6 +228,7 @@ public class Main {
             List<String> listOfTestSentences = loadData(args[1]);
             List<Sentence> testData = createSentences(listOfTestSentences);
             methodChoice(trainData, testData, listOfCategories, args[3], args[4], args[5]);
+            //Wrong number of arguments
         }else{
             System.out.println("Wrong parameters!");
         }

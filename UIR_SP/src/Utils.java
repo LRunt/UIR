@@ -9,7 +9,7 @@ import java.util.Locale;
 /**
  * Class {@code Utils} represents utils for classifications
  * @author Lukas Runt
- * @version 1.0 (02-05-2022)
+ * @version 1.2 (14-05-2022)
  */
 public class Utils {
 
@@ -76,6 +76,9 @@ public class Utils {
     /**
      * Method saves the model
      * @param fileName name of the file
+     * @param trainData train dataset
+     * @param classifier name of the classifier
+     * @param parameter name of the parameter
      */
     public static void saveModel(String fileName, List<Sentence> trainData, String classifier, String parameter){
         try {

@@ -1,24 +1,41 @@
 import java.util.*;
-import java.util.stream.Collectors;
 
+/**
+ * Class {@code KNearestNeighbors} represents a classification with euclid distance by N nearest neighbors
+ * @author Luaks Runt
+ * @version 1.1(14-05-2022)
+ */
 public class KNearestNeighbors {
 
+    /** List of classified sentences*/
     private List<Sentence> classifiedSentences;
-
+    /** number of nearest neighbors*/
     private int k;
 
+    /**
+     * Constructor of {@code KNearestNeighbors}
+     * @param symptoms symptoms of train data
+     * @param sentences sentences to classify
+     * @param k number of nearest neighbors
+     */
     public KNearestNeighbors(List<Sentence> symptoms, List<Sentence> sentences, int k){
         this.k = k;
         this.classifiedSentences = classifySentences(symptoms, sentences);
     }
 
+    /**
+     * Constructor of {@code KNearestNeighbors}, for classify of one sentence
+     * @param k number of nearest neighbors
+     */
     public KNearestNeighbors(int k){
         this.k = k;
     }
 
     /**
-     *
-     * @return
+     * Method classify sentences with KNearestNeighbors classify algorithm
+     * @param testSentences list of train sentences
+     * @param trainSentences list of sentences to classify
+     * @return list of classified sentences
      */
     private List<Sentence> classifySentences(List<Sentence> trainSentences, List<Sentence> testSentences){
         List<Sentence> classifiedSentences = new ArrayList<>();
@@ -28,6 +45,12 @@ public class KNearestNeighbors {
         return classifiedSentences;
     }
 
+    /**
+     * Method classify one sentence with KNearestNeighbors classify algorithm
+     * @param sentence sentence to classify
+     * @param trainSentences list of train sentences
+     * @return classified sentence
+     */
     public Sentence classifySentence(Sentence sentence, List<Sentence> trainSentences){
         List<SentenceWithDistance> distanceOfSentences = new ArrayList<>();
         for(Sentence trainSentence : trainSentences){

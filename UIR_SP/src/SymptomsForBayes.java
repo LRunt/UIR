@@ -2,8 +2,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Class {@code BagOfWords} represents bag with categories,
- * where each category has counted how many words were contained in the training data per category
+ * Class {@code SymptomsForBayes} represents data for classification with bayes,
  * @author Lukas Runt
  * @version 1.0 (28-04-2022)
  */
@@ -13,18 +12,28 @@ public class SymptomsForBayes{
     private HashMap<String, HashMap> symptoms;
 
     /**
-     * Constructor of class {@code BagOfWords}
+     * Constructor of class {@code SymptomsForBayes}
      * @param trainData training sentences from inputFile
+     * @param listOfCategories list of all possible categories
      */
     public SymptomsForBayes(List<Sentence> trainData, List<String> listOfCategories){
         //this.symptoms = Utils.createHashMapOfCategories(listOfCategories);
         this.symptoms = createSymptoms(Utils.createHashMapOfCategories(listOfCategories), trainData);
     }
 
+    /**
+     * Consroctor of class {@code SymptomsForBayes}
+     * @param trainData training sentences from inputFile
+     */
     public SymptomsForBayes(List<Sentence> trainData){
         this.symptoms = createSymptoms(createEmptyMap(trainData), trainData);
     }
 
+    /**
+     *
+     * @param trainSentence
+     * @return
+     */
     private HashMap<String, HashMap> createEmptyMap(List<Sentence> trainSentence){
         HashMap<String, HashMap> emptyMap = new HashMap<>();
         for(Sentence sentence : trainSentence){

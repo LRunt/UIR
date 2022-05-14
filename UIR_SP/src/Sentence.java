@@ -1,9 +1,10 @@
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Class {@code Sentence} is messenger of one sentence
  * @author Lukas Runt
- * @version 1.0 (28-04-2022)
+ * @version 1.2 (14-05-2022)
  */
 public class Sentence {
     /**A category of sentence */
@@ -26,11 +27,16 @@ public class Sentence {
      */
     public Sentence(String category, String text){
         this.category = category;
-        this.text = text;
+        this.text = text.toLowerCase(Locale.US);
         this.BOW = createBagOfWords();
         this.TF = createTermFrequency();
     }
 
+    /**
+     * Constructor of class sentence
+     * @param category category of sentence
+     * @param symptoms the sentence
+     */
     public Sentence(String category, HashMap<String, Double> symptoms){
         this.category = category;
         this.symptoms = symptoms;

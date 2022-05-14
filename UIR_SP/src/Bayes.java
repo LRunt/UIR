@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Class {@code Bayes} represents a Naive Bayes classifier
  * @author Lukas Runt
- * @version 1.0 (01-05-2022)
+ * @version 2.0 (14-05-2022)
  */
 public class Bayes {
 
