@@ -59,6 +59,17 @@ public class Sentence {
                 }
             }
         }
+        String[] intepunction = text.split("[0-9A-Za-z' ]");
+        for (String word : intepunction) {
+            if (!word.equals("")) {
+                if (bagOfWords.containsKey(word)) {
+                    double count = bagOfWords.get(word);
+                    bagOfWords.put(word, count + 1);
+                } else {
+                    bagOfWords.put(word, 1.0);
+                }
+            }
+        }
         return bagOfWords;
     }
 
